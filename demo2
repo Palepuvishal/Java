@@ -1,0 +1,80 @@
+class Solution {
+public:
+    void helper(vector<int>& arr, int k, int x, int start, int lastIndex,
+            vector<int>& current, vector<vector<int>>& combinations) {
+    if (current.size() == k) {
+        combinations.push_back(current);
+        return;
+    }
+    for (int i = start; i < arr.size(); i++) {
+        if (current.empty() || (i - lastIndex) >= x) {
+            current.push_back(arr[i]);
+            helper(arr, k, x, i + 1, i, current, combinations);
+            current.pop_back();  
+        }
+    }
+}
+
+
+vector<pair<vector<int>, int>> getCombinationsAndSums(vector<int>& arr, int k, int x) {
+    vector<vector<int>> combinations;
+    vector<int> current;
+    helper(arr, k, x, 0, -x, current, combinations);
+    
+    vector<pair<vector<int>, int>> results;
+    for (const auto& comb : combinations) {
+        int sum = 0;
+        for (int num : comb) {
+            sum += num;
+        }
+        results.push_back({comb, sum});
+    }
+    return results;
+}
+    
+    
+    double findMedianInRange(vector<int>& nums, int start, int end) {
+    
+    vector<int> sub(nums.begin() + start, nums.begin() + end + 1);
+    
+    sort(sub.begin(), sub.end());
+    
+    int n = sub.size();
+    
+    if (n % 2 == 1) {
+        return sub[n / 2];
+    }
+    else {
+        return (sub[(n / 2) - 1] + sub[n / 2]) / 2.0;
+    }
+}
+
+    
+    long long minOperations(vector<int>& nums, int x, int k) {
+        int n = nums.size();
+        if(x*k > n) return -1;
+        if(x*k == n){
+            long long sum = 0;
+            for(int i=0;i<n;i = i + 2){
+                sum+= abs(nums[i]-nums[i+1]);
+            }
+            return sum;
+        }
+        else{
+            vector<long long> ans; 
+            for(int i=0;i<=n-x;i++){
+                long long sum = 0;
+                double median = findMedianInRange(nums,i,i+k);
+                for(int j = i;j<= i + k;j++){
+                    sum +=abs(median-nums[j]);
+                }
+                cout<<sum<<" ";
+                ans.push_back(sum);
+            }
+            vector<long long> result = getCombinationsAndSums(ans,k,x);
+            for(int i =0;i<result.size();i++){
+                cout<<result[i]<<" ";
+            }
+        }
+    }
+};
